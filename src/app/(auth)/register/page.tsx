@@ -9,8 +9,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { TAuthCredentialValidator } from "@/lib/validators/accounts-credential-validator";
-import { AuthCredentialValidator } from "@/lib/validators/accounts-credential-validator";
+import {
+  AuthCredentialValidator,
+  TAuthCredentialValidator,
+} from "@/lib/validators/accounts-credential-validator";
+import { trpc } from "@/trpc/client";
 
 const RegisterationPage = () => {
   const {
@@ -21,8 +24,11 @@ const RegisterationPage = () => {
     resolver: zodResolver(AuthCredentialValidator),
   });
 
+  const { mutate, isLoading } = trpc.auth.createPayloadUser.useMutation({});
+
   const onSubmit = ({ email, password }: TAuthCredentialValidator) => {
-    
+    // send data to server
+    mutate({ email, password });
   };
 
   return (
@@ -70,6 +76,7 @@ const RegisterationPage = () => {
                       "focus-visible:ring-red-500": errors.password,
                     })}
                     placeholder="Password"
+                    type="password"
                   />
                 </div>
                 {/* Sign up button */}
